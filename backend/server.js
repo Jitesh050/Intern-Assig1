@@ -15,11 +15,17 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Jitesh005:Jitesh%40234@cluster0.ueni8wx.mongodb.net/bookreview?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Jitesh005:Jitesh%40234@cluster0.ueni8wx.mongodb.net/bookreview?retryWrites=true&w=majority';
+
+console.log('Attempting to connect to MongoDB...');
+console.log('MongoDB URI:', MONGODB_URI.replace(/\/\/.*@/, '//***:***@')); // Hide credentials in logs
 
 mongoose.connect(MONGODB_URI)
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+.then(() => console.log('✅ Connected to MongoDB successfully'))
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  console.error('Connection string used:', MONGODB_URI.replace(/\/\/.*@/, '//***:***@'));
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {
