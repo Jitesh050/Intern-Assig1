@@ -2,7 +2,6 @@ import dbConnect from '../../lib/dbConnect.js';
 import User from '../../models/User.js';
 import Book from '../../models/Book.js';
 import Review from '../../models/Review.js';
-import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -17,12 +16,11 @@ export default async function handler(req, res) {
     await Book.deleteMany({});
     await Review.deleteMany({});
 
-    // Create demo user
-    const hashedPassword = await bcrypt.hash('password123', 10);
+    // Create demo user (password will be auto-hashed by the pre-save hook)
     const demoUser = new User({
       name: 'Demo User',
       email: 'demo@bookreview.com',
-      password: hashedPassword
+      password: 'password123' // Let the pre-save hook hash this
     });
     await demoUser.save();
 
