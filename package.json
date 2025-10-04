@@ -2,8 +2,9 @@
   "name": "book-review-platform",
   "version": "1.0.0",
   "description": "A MERN stack book review platform with authentication and CRUD operations",
-  "main": "index.js",
+  "main": "backend/server.js",
   "scripts": {
+    "start": "cd backend && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && npm run dev",
     "client": "cd frontend && npm start",
