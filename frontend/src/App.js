@@ -3,8 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate, useParams } 
 import axios from 'axios';
 import './App.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const API = '/api';
 
 // Auth Context
 const AuthContext = createContext(null);
