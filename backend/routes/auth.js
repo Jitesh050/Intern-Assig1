@@ -1,7 +1,10 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
+const Book = require('../models/Book');
+const Review = require('../models/Review');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
@@ -115,6 +118,68 @@ router.get('/me', auth, async (req, res) => {
   } catch (error) {
     console.error('Get user error:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// @route   POST /api/auth/seed
+// @desc    Seed the database with demo data
+// @access  Public
+router.post('/seed', async (req, res) => {
+  try {
+    // Clear existing data
+    await User.deleteMany({});
+    await Book.deleteMany({});
+    await Review.deleteMany({});
+
+    // Create demo user
+    const hashedPassword = await bcrypt.hash('password123', 10);
+    const demoUser = new User({
+      name: 'Demo User',
+      email: 'demo@bookreview.com',
+      password: hashedPassword
+    });
+    await demoUser.save();
+
+    // Add sample books
+    const books = [
+      {
+        title: 'To Kill a Mockingbird',
+        author: 'Harper Lee',
+        description: 'A gripping tale of racial injustice and childhood innocence.',
+        genre: 'Fiction',
+        year: 1960,
+        addedBy: demoUser._id
+      },
+      {
+        title: '1984',
+        author: 'George Orwell',
+        description: 'A dystopian social science fiction novel about totalitarian control.',
+        genre: 'Dystopian Fiction',
+        year: 1949,
+        addedBy: demoUser._id
+      }
+    ];
+
+    const savedBooks = await Book.insertMany(books);
+
+    // Add sample review
+    const review = new Review({
+      bookId: savedBooks[0]._id,
+      userId: demoUser._id,
+      rating: 5,
+      reviewText: 'An absolute masterpiece!'
+    });
+    await review.save();
+
+    res.json({ 
+      message: 'Database seeded successfully!',
+      user: 'demo@bookreview.com / password123',
+      books: savedBooks.length,
+      reviews: 1
+    });
+  } catch (error) {
+    console.error('Seeding error:', error);
+    res.status(500).json({ message: 'Seeding failed', error: error.message });
   }
 });
 
