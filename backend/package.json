@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node start.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "create-demo-user": "node createUser.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
